@@ -29,7 +29,7 @@ class FijkPlugin {
   static const MethodChannel _channel = const MethodChannel('befovy.com/fijk');
 
   static Future<int> _createPlayer() {
-    return _channel.invokeMethod("createPlayer");
+    return _channel.invokeMethod("createPlayer").then((value) => value ?? -1);
   }
 
   static Future<void> _releasePlayer(int pid) {
@@ -87,7 +87,9 @@ class FijkPlugin {
   /// Check if screen is kept on
   static Future<bool> isScreenKeptOn() {
     if (Platform.isAndroid || Platform.isIOS) {
-      return _channel.invokeMethod("isScreenKeptOn");
+      return _channel
+          .invokeMethod("isScreenKeptOn")
+          .then((value) => value ?? false);
     }
     return Future.value(false);
   }
@@ -95,7 +97,7 @@ class FijkPlugin {
   /// Set screen brightness.
   /// The range of [value] is [0.0, 1.0]
   static Future<void> setScreenBrightness(double value) {
-    if (value == null || value < 0.0 || value > 1.0) {
+    if (value < 0.0 || value > 1.0) {
       return Future.error(ArgumentError.value(
           value, "brightness value must be not null and in range [0.0, 1.0]"));
     } else if (Platform.isAndroid || Platform.isIOS) {
@@ -109,7 +111,9 @@ class FijkPlugin {
   /// The range of returned value is [0.0, 1.0]
   static Future<double> screenBrightness() {
     if (Platform.isAndroid || Platform.isIOS) {
-      return _channel.invokeMethod("brightness");
+      return _channel
+          .invokeMethod("brightness")
+          .then((value) => value ?? false);
     }
     return Future.value(0);
   }
@@ -136,7 +140,7 @@ class FijkPlugin {
     return _channel.invokeMethod("logLevel", <String, dynamic>{'level': level});
   }
 
-  static StreamSubscription _eventSubs;
+  static StreamSubscription? _eventSubs;
 
   static void _onLoad(String type) {
     if (_eventSubs == null) {

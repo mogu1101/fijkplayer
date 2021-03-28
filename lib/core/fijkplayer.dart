@@ -27,16 +27,16 @@ part of fijkplayer;
 /// FijkPlayer invoke native method and receive native event.
 class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   static Map<int, FijkPlayer> _allInstance = HashMap();
-  String _dataSource;
+  String? _dataSource;
 
-  int _playerId;
-  int _callId;
-  MethodChannel _channel;
-  StreamSubscription<dynamic> _nativeEventSubscription;
+  int _playerId = -1;
+  int _callId = 0;
+  late MethodChannel _channel;
+  StreamSubscription<dynamic>? _nativeEventSubscription;
 
   bool _startAfterSetup = false;
 
-  FijkValue _value;
+  late FijkValue _value;
 
   static Iterable<FijkPlayer> get all => _allInstance.values;
 
@@ -109,10 +109,10 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
 
   Stream<bool> get onBufferStateUpdate => _bufferStateController.stream;
 
-  String get dataSource => _dataSource;
+  String? get dataSource => _dataSource;
 
   final Completer<int> _nativeSetup;
-  Completer<Uint8List> _snapShot;
+  Completer<Uint8List>? _snapShot;
 
   FijkPlayer()
       : _nativeSetup = Completer(),
@@ -147,9 +147,9 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
       case "_onSnapshot":
         var img = call.arguments;
         if (img is Map) {
-          _snapShot.complete(img['data']);
+          _snapShot?.complete(img['data']);
         } else {
-          _snapShot.completeError(UnsupportedError("snapshot"));
+          _snapShot?.completeError(UnsupportedError("snapshot"));
         }
         _snapShot = null;
         break;
@@ -219,7 +219,9 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   Future<int> setupSurface() async {
     await _nativeSetup.future;
     FijkLog.i("$this setupSurface");
-    return _channel.invokeMethod("setupSurface");
+    return _channel
+        .invokeMethod<int>("setupSurface")
+        .then((value) => value ?? -1);
   }
 
   /// Take snapshot (screen shot) of current playing video
@@ -238,12 +240,12 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   Future<Uint8List> takeSnapShot() async {
     await _nativeSetup.future;
     FijkLog.i("$this takeSnapShot");
-    if (_snapShot != null && !_snapShot.isCompleted) {
+    if (_snapShot != null && !_snapShot!.isCompleted) {
       return Future.error(StateError("last snapShot is not finished"));
     }
     _snapShot = Completer<Uint8List>();
     _channel.invokeMethod("snapshot");
-    return _snapShot.future;
+    return _snapShot!.future;
   }
 
   /// Set data source for this player
@@ -272,7 +274,7 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   ///
   /// If both [autoPlay] and [showCover] are true, [showCover] will be ignored.
   Future<void> setDataSource(
-    String path, {
+    String? path, {
     bool autoPlay = false,
     bool showCover = false,
   }) async {
@@ -328,7 +330,7 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   /// Default value of audio track is 1.0,
   /// [volume] must be greater or equals to 0.0
   Future<void> setVolume(double volume) async {
-    if (volume == null || volume < 0) {
+    if (volume < 0) {
       FijkLog.e("$this invoke seekTo invalid volume:$volume");
       return Future.error(
           ArgumentError.value(volume, "setVolume invalid volume"));
@@ -512,7 +514,7 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
 
         if (fpState != oldState) {
           FijkLog.i("$this state changed to $fpState <= $oldState");
-          FijkException fijkException =
+          FijkException? fijkException =
               (fpState != FijkState.error) ? FijkException.noException : null;
           if (newStateId == FijkState.prepared.index) {
             _setValue(value.copyWith(
@@ -571,10 +573,12 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   }
 
   void _errorListener(Object obj) {
-    final PlatformException e = obj;
-    FijkException exception = FijkException.fromPlatformException(e);
-    FijkLog.e("$this errorListener: $exception");
-    _setValue(value.copyWith(exception: exception));
+    if (obj is PlatformException) {
+      final PlatformException e = obj;
+      FijkException exception = FijkException.fromPlatformException(e);
+      FijkLog.e("$this errorListener: $exception");
+      _setValue(value.copyWith(exception: exception));
+    }
   }
 
   @override

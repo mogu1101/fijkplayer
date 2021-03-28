@@ -33,7 +33,7 @@ class FijkPlayerTester {
   final MethodChannel playerEvent;
   final MethodChannel playerMethod;
 
-  FijkPlayerTester({this.id})
+  FijkPlayerTester({required this.id})
       : playerEvent = MethodChannel("befovy.com/fijkplayer/event/$id"),
         playerMethod = MethodChannel("befovy.com/fijkplayer/$id") {
     playerEvent.setMockMethodCallHandler(this.eventHandler);
@@ -48,7 +48,7 @@ class FijkPlayerTester {
     switch (call.method) {
       case 'listen':
       case 'cancel':
-        return null;
+        return Future.value(null);
       default:
         return Future.error("event Method invalid call name ${call.method}");
     }
@@ -91,9 +91,10 @@ class FijkPlayerTester {
 
   Future<void> sendEvent(dynamic event) {
     return defaultBinaryMessenger.handlePlatformMessage(
-        "befovy.com/fijkplayer/event/$id",
-        codec.encodeSuccessEnvelope(event),
-        (ByteData data) {});
+      "befovy.com/fijkplayer/event/$id",
+      codec.encodeSuccessEnvelope(event),
+      (ByteData? data) {},
+    );
   }
 }
 
@@ -119,7 +120,7 @@ void main() {
           Map args = methodCall.arguments as Map;
           int pid = args["pid"];
           expect(pid, isNotNull);
-          FijkPlayerTester tester = playerTesters.remove(pid);
+          FijkPlayerTester? tester = playerTesters.remove(pid);
           tester?.release();
           return null;
         case 'logLevel':
@@ -162,7 +163,7 @@ void main() {
       }, throwsArgumentError);
 
       expect(() async {
-        await player.setLoop(null);
+        await player.setLoop(0);
       }, throwsArgumentError);
 
       await player.setLoop(1);
@@ -250,7 +251,7 @@ void main() {
         await player.setLoop(-1);
       }, throwsArgumentError);
       expect(() async {
-        await player.setLoop(null);
+        await player.setLoop(0);
       }, throwsArgumentError);
       await player.release();
     });
@@ -258,7 +259,7 @@ void main() {
     test("setSpeed", () async {
       FijkPlayer player = FijkPlayer();
       expect(() async {
-        await player.setSpeed(null);
+        await player.setSpeed(0);
       }, throwsArgumentError);
       expect(() async {
         await player.setSpeed(0);
@@ -326,7 +327,7 @@ void main() {
       FijkPlayer player = FijkPlayer();
 
       expect(() async {
-        await player.seekTo(null);
+        await player.seekTo(0);
       }, throwsArgumentError);
 
       expect(() async {
@@ -334,7 +335,7 @@ void main() {
       }, throwsStateError);
 
       bool argError = false;
-      await player.seekTo(null).catchError((e) {
+      await player.seekTo(0).catchError((e) {
         argError = true;
       }, test: (e) {
         return e is ArgumentError;

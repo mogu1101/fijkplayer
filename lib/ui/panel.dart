@@ -35,15 +35,15 @@ Widget defaultFijkPanelBuilder(FijkPlayer player, FijkData data,
 /// Default Panel Widget
 class _DefaultFijkPanel extends StatefulWidget {
   final FijkPlayer player;
-  final BuildContext buildContext;
+  final BuildContext? buildContext;
   final Size viewSize;
   final Rect texturePos;
 
   const _DefaultFijkPanel({
-    @required this.player,
+    required this.player,
     this.buildContext,
-    this.viewSize,
-    this.texturePos,
+    this.viewSize = Size.zero,
+    this.texturePos = Rect.zero,
   });
 
   @override
@@ -75,18 +75,18 @@ class _DefaultFijkPanelState extends State<_DefaultFijkPanel> {
 
   bool _playing = false;
   bool _prepared = false;
-  String _exception;
+  String? _exception;
 
   // bool _buffering = false;
 
   double _seekPos = -1.0;
 
-  StreamSubscription _currentPosSubs;
+  late StreamSubscription _currentPosSubs;
 
-  StreamSubscription _bufferPosSubs;
+  late StreamSubscription _bufferPosSubs;
   //StreamSubscription _bufferingSubs;
 
-  Timer _hideTimer;
+  Timer? _hideTimer;
   bool _hideStuff = true;
 
   double _volume = 1.0;
@@ -130,7 +130,7 @@ class _DefaultFijkPanelState extends State<_DefaultFijkPanel> {
 
     bool playing = (value.state == FijkState.started);
     bool prepared = value.prepared;
-    String exception = value.exception.message;
+    String? exception = value.exception.message;
     if (playing != _playing ||
         prepared != _prepared ||
         exception != _exception) {
@@ -311,7 +311,7 @@ class _DefaultFijkPanelState extends State<_DefaultFijkPanel> {
                     child: Center(
                         child: _exception != null
                             ? Text(
-                                _exception,
+                                _exception!,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 25,
