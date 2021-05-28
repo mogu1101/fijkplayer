@@ -143,11 +143,8 @@ class FijkVolume {
   /// mode can be one of
   /// {[hideUIWhenPlayable], [hideUIWhenPlaying], [neverShowUI], [alwaysShowUI]}
   static Future<void> setUIMode(int mode) {
-    if (mode == null)
-      return Future.error(ArgumentError.notNull("mode"));
-    else
-      return FijkPlugin._channel
-          .invokeMethod("volUiMode", <String, dynamic>{'mode': mode});
+    return FijkPlugin._channel
+        .invokeMethod("volUiMode", <String, dynamic>{'mode': mode});
   }
 
   void _onVolCallback(double vol, bool ui) {
@@ -197,8 +194,7 @@ class FijkVolumeWatcher extends StatefulWidget {
     required this.watcher,
     required this.child,
     bool showToast = false,
-  })  : assert(child != null),
-        showToast = showToast;
+  }) : showToast = showToast;
 
   @override
   _FijkVolumeWatcherState createState() => _FijkVolumeWatcherState();

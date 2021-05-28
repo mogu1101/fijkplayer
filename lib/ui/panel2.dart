@@ -169,7 +169,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
   }
 
   double dura2double(Duration d) {
-    return d != null ? d.inMilliseconds.toDouble() : 0.0;
+    return d.inMilliseconds.toDouble();
   }
 
   void _playerValueChanged() {
@@ -370,7 +370,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
   }
 
   Widget buildBottom(BuildContext context, double height) {
-    if (_duration != null && _duration.inMilliseconds > 0) {
+    if (_duration.inMilliseconds > 0) {
       return Row(
         children: <Widget>[
           buildPlayButton(context, height),

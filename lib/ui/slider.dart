@@ -49,11 +49,7 @@ class FijkSlider extends StatefulWidget {
     this.min = 0.0,
     this.max = 1.0,
     this.colors = const FijkSliderColors(),
-  })  : assert(value != null),
-        assert(cacheValue != null),
-        assert(min != null),
-        assert(max != null),
-        assert(min <= max),
+  })  : assert(min <= max),
         assert(value >= min && value <= max),
         super(key: key);
 
@@ -146,10 +142,7 @@ class _SliderPainter extends CustomPainter {
   final FijkSliderColors colors;
 
   _SliderPainter(this.v, this.cv, this.dragging,
-      {this.colors = const FijkSliderColors()})
-      : assert(colors != null),
-        assert(v != null),
-        assert(cv != null);
+      {this.colors = const FijkSliderColors()});
 
   @override
   void paint(Canvas canvas, Size size) {

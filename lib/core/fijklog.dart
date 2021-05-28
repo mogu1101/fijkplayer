@@ -29,8 +29,7 @@ class FijkLogLevel {
   final String name;
 
   const FijkLogLevel._(int l, String n)
-      : assert(l != null),
-        level = l,
+      : level = l,
         name = n;
 
   /// Priority constant for the [FijkLog.log] method;
@@ -79,12 +78,11 @@ class FijkLog {
   const FijkLog._();
 
   /// Set global whole log level
-  /// 
+  ///
   /// Call this method on Android platform will load natvie shared libraries.
-  /// If you care about app boot performance, 
+  /// If you care about app boot performance,
   /// you should call this method as late as possiable. Call this method before the first time you consturctor new [FijkPlayer]
   static setLevel(final FijkLogLevel level) {
-    assert(level != null);
     _level = level;
     log(FijkLogLevel.Silent, "set log level $level", "fijk");
     FijkPlugin._setLogLevel(level.level).then((_) {

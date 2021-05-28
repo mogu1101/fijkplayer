@@ -156,8 +156,8 @@ class _DefaultFijkPanelState extends State<_DefaultFijkPanel> {
     _hideTimer?.cancel();
 
     player.removeListener(_playerValueChanged);
-    _currentPosSubs?.cancel();
-    _bufferPosSubs?.cancel();
+    _currentPosSubs.cancel();
+    _bufferPosSubs.cancel();
   }
 
   void _startHideTimer() {

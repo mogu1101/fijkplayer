@@ -189,10 +189,8 @@ class _FijkViewState extends State<FijkView> {
     super.initState();
     _fijkData = FijkData();
     Size s = widget.player.value.size;
-    if (s != null) {
-      _vWidth = s.width;
-      _vHeight = s.height;
-    }
+    _vWidth = s.width;
+    _vHeight = s.height;
     widget.player.addListener(_fijkValueListener);
     _nativeSetup();
   }
@@ -231,7 +229,7 @@ class _FijkViewState extends State<FijkView> {
 
       // save width and height to make judgement about whether to
       // request landscape when enter full screen mode
-      if (value.size != null && value.prepared) {
+      if (value.prepared) {
         _vWidth = value.size.width;
         _vHeight = value.size.height;
       }
@@ -343,7 +341,7 @@ class _InnerFijkView extends StatefulWidget {
     required this.fullScreen,
     required this.cover,
     required this.data,
-  }) : assert(fijkViewState != null);
+  });
 
   final _FijkViewState fijkViewState;
   final bool fullScreen;
@@ -399,7 +397,7 @@ class __InnerFijkViewState extends State<_InnerFijkView> {
     bool fullScreen = value.fullScreen;
     bool videoRender = value.videoRenderStart;
 
-    if (value.size != null && value.prepared) {
+    if (value.prepared) {
       width = value.size.width;
       height = value.size.height;
     }
@@ -457,7 +455,7 @@ class __InnerFijkViewState extends State<_InnerFijkView> {
   }
 
   double getAspectRatio(BoxConstraints constraints, double ar) {
-    if (ar == null || ar < 0) {
+    if (ar < 0) {
       ar = _vWidth / _vHeight;
     } else if (ar.isInfinite) {
       ar = constraints.maxWidth / constraints.maxHeight;
@@ -521,7 +519,7 @@ class __InnerFijkViewState extends State<_InnerFijkView> {
 
     FijkValue value = _player.value;
     FijkData data = widget.data;
-    if (value.size != null && value.prepared) {
+    if (value.prepared) {
       _vWidth = value.size.width;
       _vHeight = value.size.height;
     }

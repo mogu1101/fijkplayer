@@ -424,7 +424,7 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
 
   Future<void> seekTo(int msec) async {
     await _nativeSetup.future;
-    if (msec == null || msec < 0) {
+    if (msec < 0) {
       FijkLog.e("$this invoke seekTo invalid msec:$msec");
       return Future.error(
           ArgumentError.value(msec, "speed must be not null and >= 0"));
@@ -462,7 +462,7 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   /// If [loopCount] is 0, is means infinite repeat.
   Future<void> setLoop(int loopCount) async {
     await _nativeSetup.future;
-    if (loopCount == null || loopCount < 0) {
+    if (loopCount < 0) {
       FijkLog.e("$this invoke setLoop invalid loopCount:$loopCount");
       return Future.error(ArgumentError.value(
           loopCount, "loopCount must not be null and >= 0"));
@@ -479,7 +479,7 @@ class FijkPlayer extends ChangeNotifier implements ValueListenable<FijkValue> {
   /// Default speed is 1
   Future<void> setSpeed(double speed) async {
     await _nativeSetup.future;
-    if (speed == null || speed <= 0) {
+    if (speed <= 0) {
       FijkLog.e("$this invoke setSpeed invalid speed:$speed");
       return Future.error(ArgumentError.value(
           speed, "speed must be not null and greater than 0"));
